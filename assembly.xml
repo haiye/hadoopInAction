@@ -25,6 +25,15 @@
                 <exclude>*-sources.jar</exclude>
             </excludes>
         </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/conf</directory>
+            <outputDirectory>/conf</outputDirectory>
+            <fileMode>755</fileMode>
+            <lineEnding>unix</lineEnding>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
     </fileSets>
     <dependencySets>
         <dependencySet>
