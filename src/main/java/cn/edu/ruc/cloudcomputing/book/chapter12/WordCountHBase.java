@@ -26,7 +26,7 @@ public class WordCountHBase
 	public static class Map extends Mapper<LongWritable,Text,Text,IntWritable>{
 		private IntWritable i = new IntWritable(1);
 		public void map(LongWritable key,Text value,Context context) throws IOException, InterruptedException{
-			String s[] =value.toString().trim().split(" ");	//�������ÿ�������Կո�ֿ�
+			String s[] =value.toString().trim().split(" ");	//将输入的每行输入以空格分开
 			for( String m : s){
 				context.write(new Text(m), i);
 			}
@@ -39,8 +39,8 @@ public class WordCountHBase
 			for(IntWritable i : values){
 				sum += i.get();
 			}
-			Put put = new Put(Bytes.toBytes(key.toString()));	//Putʵ��ÿһ���ʴ�һ��
-			put.add(Bytes.toBytes("content"),Bytes.toBytes("count"),Bytes.toBytes(String.valueOf(sum)));//����Ϊcontent�������η�Ϊcount����ֵΪ��Ŀ
+			Put put = new Put(Bytes.toBytes(key.toString()));	//Put实例化，每一个词存一行
+			put.add(Bytes.toBytes("content"),Bytes.toBytes("count"),Bytes.toBytes(String.valueOf(sum)));//列族为content，列修饰符为count，列值为数目
 			context.write(NullWritable.get(), put);
 		}
 	}
@@ -65,7 +65,7 @@ public class WordCountHBase
 		Configuration conf = new Configuration();
 		conf.set(TableOutputFormat.OUTPUT_TABLE, tablename);
 		createHBaseTable(tablename);
-		String input = args[0];	//��������ֵ
+		String input = args[0];	//设置输入值
 		Job job = new Job(conf, "WordCount table with " + input);
 		job.setJarByClass(WordCountHBase.class);
 		job.setNumReduceTasks(3);
