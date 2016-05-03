@@ -40,14 +40,14 @@ public class WordCountHBase
 				sum += i.get();
 			}
 			Put put = new Put(Bytes.toBytes(key.toString()));	//Put实例化，每一个词存一行
-			put.add(Bytes.toBytes("content"),Bytes.toBytes("count"),Bytes.toBytes(String.valueOf(sum)));//列族为content，列修饰符为count，列值为数目
+			put.add(Bytes.toBytes("cf2"),Bytes.toBytes("count"),Bytes.toBytes(String.valueOf(sum)));//列族为content，列修饰符为count，列值为数目
 			context.write(NullWritable.get(), put);
 		}
 	}
 	
 	public static void createHBaseTable(String tablename)throws IOException{
 		HTableDescriptor htd = new	HTableDescriptor(tablename);
-		HColumnDescriptor col = new	HColumnDescriptor("content:");
+		HColumnDescriptor col = new	HColumnDescriptor("cf2");
 		htd.addFamily(col);
 		HBaseConfiguration config = new	HBaseConfiguration();
 		HBaseAdmin admin = new HBaseAdmin(config);
