@@ -11,8 +11,8 @@ import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.util.*;
 
-public class WordCount extends Configured implements Tool {
-	public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
+public class WordCountNew extends Configured implements Tool {
+	public static class WordCountNewMap extends Mapper<LongWritable, Text, Text, IntWritable> {
 	     private final static IntWritable one = new IntWritable(1);
 	     private Text word = new Text();
 	     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -25,7 +25,7 @@ public class WordCount extends Configured implements Tool {
 	     }
 	   }
 	
-	public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
+	public static class WordCountNewReduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
 	    int sum = 0;
 	     for (IntWritable val : values) {
@@ -38,13 +38,13 @@ public void reduce(Text key, Iterable<IntWritable> values, Context context) thro
 public int run(String [] args) throws Exception {
      Job job = new Job(getConf());
      job.setJarByClass(WordCount.class);
-     job.setJobName("wordcount");
+     job.setJobName("Hadoop Chapt03 wordcountNew"");
 
      job.setOutputKeyClass(Text.class);
      job.setOutputValueClass(IntWritable.class);
 	
-     job.setMapperClass(Map.class);
-     job.setReducerClass(Reduce.class);
+     job.setMapperClass(WordCountNewMap.class);
+     job.setReducerClass(WordCountNewReduce.class);
 
      job.setInputFormatClass(TextInputFormat.class);
      job.setOutputFormatClass(TextOutputFormat.class);
