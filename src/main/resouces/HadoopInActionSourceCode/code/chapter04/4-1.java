@@ -14,19 +14,19 @@ import org.apache.hadoop.util.*;
 public class WordCount extends Configured implements Tool {
 	public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
 	    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-			String line = value.toString(); //½«ÊäÈëµÄ´¿ÎÄ±¾ÎÄ¼şµÄÊı¾İ×ª»¯³ÉString
-			System.out.println(line);//ÎªÁË±ãÓÚ³ÌĞòµÄµ÷ÊÔ£¬Êä³ö¶ÁÈëµÄÄÚÈİ   
-                //½«ÊäÈëµÄÊı¾İÏÈ°´ĞĞ½øĞĞ·Ö¸î
+			String line = value.toString(); //å°†è¾“å…¥çš„çº¯æ–‡æœ¬æ–‡ä»¶çš„æ•°æ®è½¬åŒ–æˆString
+			System.out.println(line);//ä¸ºäº†ä¾¿äºç¨‹åºçš„è°ƒè¯•ï¼Œè¾“å‡ºè¯»å…¥çš„å†…å®¹   
+                //å°†è¾“å…¥çš„æ•°æ®å…ˆæŒ‰è¡Œè¿›è¡Œåˆ†å‰²
 			StringTokenizer tokenizerArticle = new StringTokenizer(line,"\n");		 
-	         //·Ö±ğ¶ÔÃ¿Ò»ĞĞ½øĞĞ´¦Àí
+	         //åˆ†åˆ«å¯¹æ¯ä¸€è¡Œè¿›è¡Œå¤„ç†
 			while(tokenizerArticle.hasMoreTokens()){
-                   //Ã¿ĞĞ°´¿Õ¸ñ»®·Ö
+                   //æ¯è¡ŒæŒ‰ç©ºæ ¼åˆ’åˆ†
 				StringTokenizer tokenizerLine = new StringTokenizer(tokenizerArticle.nextToken()); 
-				String strName = tokenizerLine.nextToken(); //Ñ§ÉúĞÕÃû²¿·Ö  
-				String strScore = tokenizerLine.nextToken();//³É¼¨²¿·Ö
-				Text name = new Text(strName);//Ñ§ÉúĞÕÃû  
-				int scoreInt = Integer.parseInt(strScore);//Ñ§Éú³É¼¨score of student
-				context.write(name, new IntWritable(scoreInt));//Êä³öĞÕÃûºÍ³É¼¨
+				String strName = tokenizerLine.nextToken(); //å­¦ç”Ÿå§“åéƒ¨åˆ†  
+				String strScore = tokenizerLine.nextToken();//æˆç»©éƒ¨åˆ†
+				Text name = new Text(strName);//å­¦ç”Ÿå§“å  
+				int scoreInt = Integer.parseInt(strScore);//å­¦ç”Ÿæˆç»©score of student
+				context.write(name, new IntWritable(scoreInt));//è¾“å‡ºå§“åå’Œæˆç»©
 			}
 	    }
 	}
@@ -37,10 +37,10 @@ public class WordCount extends Configured implements Tool {
 			int count=0;
 			Iterator<IntWritable> iterator = values.iterator();
 			while (iterator.hasNext()) {
-				sum += iterator.next().get();	//¼ÆËã×Ü·Ö
-				count++;//Í³¼Æ×ÜµÄ¿ÆÄ¿Êı
+				sum += iterator.next().get();	//è®¡ç®—æ€»åˆ†
+				count++;//ç»Ÿè®¡æ€»çš„ç§‘ç›®æ•°
 			} 
-			int average = (int) sum/count;//¼ÆËãÆ½¾ù³É¼¨
+			int average = (int) sum/count;//è®¡ç®—å¹³å‡æˆç»©
 			context.write(key, new IntWritable(average));
 		}
 	} 
