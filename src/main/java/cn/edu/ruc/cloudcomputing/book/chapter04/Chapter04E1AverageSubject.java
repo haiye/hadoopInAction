@@ -1,5 +1,8 @@
 package cn.edu.ruc.cloudcomputing.book.chapter04;
-
+/**
+ * get average score for all subjects
+ * 
+ * */
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -18,11 +21,11 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class WordCountChapter04E1 extends Configured implements Tool {
+public class Chapter04E1AverageSubject extends Configured implements Tool {
     static int static_int_map = 1;
     static int static_int_reduce = 1;
 
-    public static class WordCountChapter04E1Map extends Mapper<LongWritable, Text, Text, Text> {
+    public static class Chapter04E1AverageSubjectMap extends Mapper<LongWritable, Text, Text, Text> {
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 
             int SUBJECT_COUNT = 1;
@@ -54,7 +57,7 @@ public class WordCountChapter04E1 extends Configured implements Tool {
         }
     }
 
-    public static class WordCountChapter04E1Combine extends Reducer<Text, Text, Text, Text> {
+    public static class Chapter04E1AverageSubjectCombine extends Reducer<Text, Text, Text, Text> {
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             System.out.println("WordCountChapter04E1Combine_debug: student_name=" + key.toString());
 
@@ -80,7 +83,7 @@ public class WordCountChapter04E1 extends Configured implements Tool {
         }
     }
 
-    public static class WordCountChapter04E1Reduce extends Reducer<Text, Text, Text, Text> {
+    public static class Chapter04E1AverageSubjectReduce extends Reducer<Text, Text, Text, Text> {
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             System.out.println("WordCountChapter04E1Reduce_debug: reduceTask number=" + (static_int_reduce++));
 
@@ -111,20 +114,20 @@ public class WordCountChapter04E1 extends Configured implements Tool {
     public int run(String[] args) throws Exception {
 
         Job job = Job.getInstance(getConf());
-        job.setJarByClass(WordCountChapter04E1.class);
+        job.setJarByClass(Chapter04E1AverageSubject.class);
         job.setJobName("WordCountChapter04E1");
 
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         job.setInputFormatClass(TextInputFormat.class);
 
-        job.setMapperClass(WordCountChapter04E1Map.class);
+        job.setMapperClass(Chapter04E1AverageSubjectMap.class);
 
-        job.setCombinerClass(WordCountChapter04E1Combine.class);
+        job.setCombinerClass(Chapter04E1AverageSubjectCombine.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
-        job.setReducerClass(WordCountChapter04E1Reduce.class);
+        job.setReducerClass(Chapter04E1AverageSubjectReduce.class);
 
         job.setOutputFormatClass(TextOutputFormat.class);
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
@@ -134,7 +137,7 @@ public class WordCountChapter04E1 extends Configured implements Tool {
     }
 
     public static void main(String[] args) throws Exception {
-        int ret = ToolRunner.run(new WordCountChapter04E1(), args);
+        int ret = ToolRunner.run(new Chapter04E1AverageSubject(), args);
         System.exit(ret);
     }
 }
