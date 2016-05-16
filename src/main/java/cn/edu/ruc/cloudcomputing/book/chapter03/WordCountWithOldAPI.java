@@ -25,69 +25,69 @@ import org.apache.hadoop.mapred.TextOutputFormat;
 
 public class WordCountWithOldAPI {
 
-	public static class WordCountMap extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
+    public static class WordCountMap extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
 
-		private final static IntWritable one = new IntWritable(1);
-		private Text word = new Text();
+        private final static IntWritable one = new IntWritable(1);
+        private Text word = new Text();
 
-		public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> output, Reporter reporter)
-				throws IOException {
-			System.out.println("Map_debug: key = " + key + "; value = " + value);
-			String line = value.toString();
-			StringTokenizer tokenizer = new StringTokenizer(line);
-			while (tokenizer.hasMoreTokens()) {
-				word.set(tokenizer.nextToken());
-				System.out.println("Map_debug: word = " + word);
-				output.collect(word, one);
-			}
-		}
-	}
+        public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> output, Reporter reporter)
+                throws IOException {
+            System.out.println("Map_debug: key = " + key + "; value = " + value);
+            String line = value.toString();
+            StringTokenizer tokenizer = new StringTokenizer(line);
+            while (tokenizer.hasMoreTokens()) {
+                word.set(tokenizer.nextToken());
+                System.out.println("Map_debug: word = " + word);
+                output.collect(word, one);
+            }
+        }
+    }
 
-	public static class WordCountReduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
-		public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> output,
-				Reporter reporter) throws IOException {
-			/* sum =0 below if we using value_bak = values; value_bak.hasNext() */
-			// Iterator<IntWritable> value_bak = values;
-			// System.out.println("Reduce_debug: input_key = " + key);
-			// int i = 0;
-			// while (value_bak.hasNext()) {
-			// System.out.println("Reduce_debug: i = " + (i++) +
-			// "; input_value = " + values.next().get());
-			// }
-			int sum = 0;
-			while (values.hasNext()) {
-				sum += values.next().get();
-				System.out.println("Reduce_debug: sum = " + sum);
-			}
-			System.out.println("Reduce_debug: key = " + key + "; sum = " + sum);
+    public static class WordCountReduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
+        public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> output,
+                Reporter reporter) throws IOException {
+            /* sum =0 below if we using value_bak = values; value_bak.hasNext() */
+            // Iterator<IntWritable> value_bak = values;
+            // System.out.println("Reduce_debug: input_key = " + key);
+            // int i = 0;
+            // while (value_bak.hasNext()) {
+            // System.out.println("Reduce_debug: i = " + (i++) +
+            // "; input_value = " + values.next().get());
+            // }
+            int sum = 0;
+            while (values.hasNext()) {
+                sum += values.next().get();
+                System.out.println("Reduce_debug: sum = " + sum);
+            }
+            System.out.println("Reduce_debug: key = " + key + "; sum = " + sum);
 
-			output.collect(key, new IntWritable(sum));
-		}
-	}
+            output.collect(key, new IntWritable(sum));
+        }
+    }
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-		if (args.length != 2) {
-			System.err.println("Usage: WordCount <in> <out>");
-			System.exit(2);
-		}
+        if (args.length != 2) {
+            System.err.println("Usage: WordCount <in> <out>");
+            System.exit(2);
+        }
 
-		JobConf conf = new JobConf(WordCountWithOldAPI.class);
-		conf.setJobName("Hadoop Chapt03 wordcount");
+        JobConf conf = new JobConf(WordCountWithOldAPI.class);
+        conf.setJobName("Hadoop Chapt03 wordcount");
 
-		FileInputFormat.setInputPaths(conf, new Path(args[0]));
-		conf.setInputFormat(TextInputFormat.class);
+        FileInputFormat.setInputPaths(conf, new Path(args[0]));
+        conf.setInputFormat(TextInputFormat.class);
 
-		conf.setMapperClass(WordCountMap.class);
+        conf.setMapperClass(WordCountMap.class);
 
-		conf.setOutputKeyClass(Text.class);
-		conf.setOutputValueClass(IntWritable.class);
+        conf.setOutputKeyClass(Text.class);
+        conf.setOutputValueClass(IntWritable.class);
 
-		conf.setReducerClass(WordCountReduce.class);
+        conf.setReducerClass(WordCountReduce.class);
 
-		FileOutputFormat.setOutputPath(conf, new Path(args[1]));
-		conf.setOutputFormat(TextOutputFormat.class);
+        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+        conf.setOutputFormat(TextOutputFormat.class);
 
-		JobClient.runJob(conf);
-	}
+        JobClient.runJob(conf);
+    }
 }
