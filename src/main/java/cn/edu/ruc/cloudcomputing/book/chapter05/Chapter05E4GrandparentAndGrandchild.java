@@ -1,11 +1,10 @@
 package cn.edu.ruc.cloudcomputing.book.chapter05;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Iterator;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -14,10 +13,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-public class STjoin {
+public class Chapter05E4GrandparentAndGrandchild {
     public static int time = 0;
 
-    public static class Map extends Mapper<Object, Text, Text, Text> {
+    public static class Chapter05E4GrandparentAndGrandchildMap extends Mapper<Object, Text, Text, Text> {
         // map将输入分割成child和parent，然后正序输出一次作为右表，反序输出一次作为左表，需要注意的是在输出的value中必须加上左右表区别标志
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             String childname = new String();
@@ -57,7 +56,7 @@ public class STjoin {
         }
     }
 
-    public static class Reduce extends Reducer<Text, Text, Text, Text> {
+    public static class Chapter05E4GrandparentAndGrandchildReduce extends Reducer<Text, Text, Text, Text> {
 
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 
@@ -94,7 +93,7 @@ public class STjoin {
                 if (relationtype == '1') {
                     grandchild[grandchildnum] = childname;
                     grandchildnum++;
-                } else {// �ұ?ȡ��parent����grandparent
+                } else {
                     grandparent[grandparentnum] = parentname;
                     grandparentnum++;
                 }
@@ -133,9 +132,9 @@ public class STjoin {
         System.out.println("queueName_afterset="+conf.get("mapred.job.queue.name"));
 
         Job job = Job.getInstance(conf, "single table join");
-        job.setJarByClass(STjoin.class);
-        job.setMapperClass(Map.class);
-        job.setReducerClass(Reduce.class);
+        job.setJarByClass(Chapter05E4GrandparentAndGrandchild.class);
+        job.setMapperClass(Chapter05E4GrandparentAndGrandchildMap.class);
+        job.setReducerClass(Chapter05E4GrandparentAndGrandchildReduce.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
