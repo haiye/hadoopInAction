@@ -6,6 +6,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HTable;
@@ -16,63 +17,125 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 public class HBaseTestCase {
-    // 声明静态配置 HBaseConfiguration
-    static Configuration cfg = HBaseConfiguration.create();
 
-    // 创建一张表，通过HBaseAdmin HTableDescriptor来创建
-    public static void creat(String tablename, String columnFamily) throws Exception {
-        HBaseAdmin admin = new HBaseAdmin(cfg);
-        if (admin.tableExists(tablename)) {
+    // create HBase Table
+    public static void creat(String tableName, String columnFamily) throws Exception {
+        // 1. create hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        Configuration hbaseConfiguration = HBaseConfiguration.create();
+        
+        // 2. create hbaseAdmin(org.apache.hadoop.hbase.client.HBaseAdmin)
+        HBaseAdmin hbaseAdmin = new HBaseAdmin(hbaseConfiguration);
+        
+        if (hbaseAdmin.tableExists(tableName)) {
+            
             System.out.println("table Exists!");
+            
             System.exit(0);
         } else {
-            HTableDescriptor tableDesc = new HTableDescriptor(tablename);
-            tableDesc.addFamily(new HColumnDescriptor(columnFamily));
-            admin.createTable(tableDesc);
+            // 3. create hbaseTableName(org.apache.hadoop.hbase.TableName)
+            TableName hbaseTableName = TableName.valueOf(tableName);
+            // 4. create hbaseTableDescriptor(org.apache.hadoop.hbase.HTableDescriptor)
+            HTableDescriptor hbaseTableDescriptor = new HTableDescriptor(hbaseTableName);
+            // 5. create hbaseColumnDescriptor(org.apache.hadoop.hbase.HColumnDescriptor)
+            HColumnDescriptor hbaseColumnDescriptor = new HColumnDescriptor(columnFamily);
+            // 6. addColumnFamily
+            hbaseTableDescriptor.addFamily(hbaseColumnDescriptor);
+            // 7. create hbaseTable
+            hbaseAdmin.createTable(hbaseTableDescriptor);
+
             System.out.println("create table success!");
         }
+
+        hbaseAdmin.close();
     }
 
-    // 添加一条数据，通过HTable Put为已经存在的表来添加数据
+    // add one row data in hbaseTable
     public static void put(String tablename, String row, String columnFamily, String column, String data)
             throws Exception {
-        HTable table = new HTable(cfg, tablename);
-        Put p1 = new Put(Bytes.toBytes(row));
-        p1.add(Bytes.toBytes(columnFamily), Bytes.toBytes(column), Bytes.toBytes(data));
-        table.put(p1);
+        // 1. create hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        Configuration hbaseConfiguration = HBaseConfiguration.create();
+        
+        // 2. get hbaseTable(org.apache.hadoop.hbase.client.HTable)
+        HTable hbaseTable = new HTable(hbaseConfiguration, tablename);
+
+        // 3. create putAction
+        Put putAction = new Put(Bytes.toBytes(row));
+        putAction.add(Bytes.toBytes(columnFamily), Bytes.toBytes(column), Bytes.toBytes(data));
+
+        // 4. take put action
+        hbaseTable.put(putAction);
         System.out.println("put '" + row + "','" + columnFamily + ":" + column + "','" + data + "'");
+
+        // 5. close hbaseTable
+        hbaseTable.close();
     }
 
+    // get one row data in hbaseTable
     public static void get(String tablename, String row) throws IOException {
-        HTable table = new HTable(cfg, tablename);
-        Get g = new Get(Bytes.toBytes(row));
-        Result result = table.get(g);
+        // 1. create hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        Configuration hbaseConfiguration = HBaseConfiguration.create();
+        
+        // 2. get hbaseTable(org.apache.hadoop.hbase.client.HTable)
+        HTable hbaseTable = new HTable(hbaseConfiguration, tablename);
+
+        // 3. create getAction(org.apache.hadoop.hbase.client.Get)
+        Get getAction = new Get(Bytes.toBytes(row));
+
+        // 4. take get action and get result(org.apache.hadoop.hbase.client.Result)
+        Result result = hbaseTable.get(getAction);
         System.out.println("Get: " + result);
+
+        // 5. close hbaseTable
+        hbaseTable.close();
     }
 
-    // 显示所有数据，通过HTable Scan来获取已有表的信息
+    // get all rows data in hbaseTable(Scan)
     public static void scan(String tablename) throws Exception {
-        HTable table = new HTable(cfg, tablename);
-        Scan s = new Scan();
-        ResultScanner rs = table.getScanner(s);
-        for (Result r : rs) {
-            System.out.println("Scan: " + r);
+        // 1. createhbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        Configuration hbaseConfiguration = HBaseConfiguration.create();
+        
+        // 2. get hbaseTable(org.apache.hadoop.hbase.client.HTable)
+        HTable hbaseTable = new HTable(hbaseConfiguration, tablename);
+
+        // 3. create scanAction(org.apache.hadoop.hbase.client.ResultScanner)
+        Scan scan = new Scan();
+
+        // 4. take scan action and get ResultScanner(org.apache.hadoop.hbase.client.ResultScanner)
+        ResultScanner resultScanner = hbaseTable.getScanner(scan);
+        for (Result result : resultScanner) {
+            System.out.println("Scan: " + result);
         }
+
+        // 5. close hbaseTable
+        hbaseTable.close();
     }
 
+    // delete hbaseTable
     public static boolean delete(String tablename) throws IOException {
+        // 1. create hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        Configuration hbaseConfiguration = HBaseConfiguration.create();
+        
+        // 2. create hbaseAdmin(org.apache.hadoop.hbase.client.HBaseAdmin)
+        HBaseAdmin hbaseAdmin = new HBaseAdmin(hbaseConfiguration);
 
-        HBaseAdmin admin = new HBaseAdmin(cfg);
-        if (admin.tableExists(tablename)) {
+        if (hbaseAdmin.tableExists(tablename)) {
             try {
-                admin.disableTable(tablename);
-                admin.deleteTable(tablename);
+                // 3. disable hbaseTable
+                hbaseAdmin.disableTable(tablename);
+
+                // 4. drop hbaseTable
+                hbaseAdmin.deleteTable(tablename);
             } catch (Exception ex) {
                 ex.printStackTrace();
+                hbaseAdmin.close();
                 return false;
             }
 
         }
+        
+        // 5. close hbaseTable
+        hbaseAdmin.close();
+        
         return true;
     }
 
