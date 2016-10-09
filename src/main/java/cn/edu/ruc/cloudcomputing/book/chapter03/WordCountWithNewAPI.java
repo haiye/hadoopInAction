@@ -1,17 +1,23 @@
 package cn.edu.ruc.cloudcomputing.book.chapter03;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.StringTokenizer;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.conf.*;
-import org.apache.hadoop.io.*;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.*;
-import org.apache.hadoop.mapreduce.lib.output.*;
-import org.apache.hadoop.util.*;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 
 public class WordCountWithNewAPI extends Configured implements Tool {
     public static class WordCountNewMap extends Mapper<LongWritable, Text, Text, IntWritable> {
@@ -40,22 +46,22 @@ public class WordCountWithNewAPI extends Configured implements Tool {
     }
 
     public int run(String[] args) throws Exception {
-        Job job = Job.getInstance(getConf());
-        job.setJarByClass(WordCountWithNewAPI.class);
-        job.setJobName("Hadoop Chapt03 wordcountNew");
+        
+        Configuration conf = new Configuration();
+        String jobName="Hadoop Chapt03 wordcountNew";
+        Job job = Job.getInstance(conf, jobName);
 
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         job.setInputFormatClass(TextInputFormat.class);
-
+        job.setOutputFormatClass(TextOutputFormat.class);
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        
+        job.setJarByClass(WordCountWithNewAPI.class);
         job.setMapperClass(WordCountNewMap.class);
+        job.setReducerClass(WordCountNewReduce.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-
-        job.setReducerClass(WordCountNewReduce.class);
-
-        job.setOutputFormatClass(TextOutputFormat.class);
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
         boolean success = job.waitForCompletion(true);
         return success ? 0 : 1;
