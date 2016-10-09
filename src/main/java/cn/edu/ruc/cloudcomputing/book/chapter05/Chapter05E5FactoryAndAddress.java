@@ -1,11 +1,10 @@
 package cn.edu.ruc.cloudcomputing.book.chapter05;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Iterator;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -14,10 +13,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-public class MTjoin {
+public class Chapter05E5FactoryAndAddress {
     public static int time = 0;
 
-    public static class Map extends Mapper<Object, Text, Text, Text> {
+    public static class Chapter05E5FactoryAndAddressMap extends Mapper<Object, Text, Text, Text> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             
@@ -59,7 +58,7 @@ public class MTjoin {
         }
     }
 
-    public static class Reduce extends Reducer<Text, Text, Text, Text> {
+    public static class Chapter05E5FactoryAndAddressReduce extends Reducer<Text, Text, Text, Text> {
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 
             System.out.println("reduce_input, key="+key);
@@ -123,9 +122,9 @@ public class MTjoin {
             System.exit(2);
         }
         Job job = Job.getInstance(conf, "multiple table join");
-        job.setJarByClass(MTjoin.class);
-        job.setMapperClass(Map.class);
-        job.setReducerClass(Reduce.class);
+        job.setJarByClass(Chapter05E5FactoryAndAddress.class);
+        job.setMapperClass(Chapter05E5FactoryAndAddressMap.class);
+        job.setReducerClass(Chapter05E5FactoryAndAddressReduce.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
         FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
