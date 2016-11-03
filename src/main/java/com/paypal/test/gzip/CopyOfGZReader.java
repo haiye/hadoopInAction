@@ -111,7 +111,8 @@ public class CopyOfGZReader {
 
     }
 
-    public CopyOfGZReader(String filePath, String[] offsetBeginIndexArray, String[] offsetEndIndexArray, boolean debugLog) {
+    public CopyOfGZReader(String filePath, String[] offsetBeginIndexArray, String[] offsetEndIndexArray,
+            boolean debugLog) {
         this.filePath = filePath;
         this.offsetBeginIndexArray = offsetBeginIndexArray;
         this.offsetEndIndexArray = offsetEndIndexArray;
@@ -163,8 +164,6 @@ public class CopyOfGZReader {
             e.printStackTrace();
         }
     }
-
-   
 
     public void readLineTestByBufferedReaderLineSkipTest() {
         ArrayList<Long> timeBeginArray = new ArrayList<Long>();
@@ -322,10 +321,7 @@ public class CopyOfGZReader {
                     .println("timeEndArray.size != timeBeginArray.size or timeEndArray.size()!=offsetBeginIndexArray.length+1");
         }
     }
-    
-    
-    
-    
+
     public void readLineByBufferedReaderSeek(String filePath, String[] offsetBeginIndexArray, boolean debug)
             throws IOException {
 

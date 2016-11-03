@@ -1,6 +1,7 @@
 package cn.edu.ruc.cloudcomputing.book.chapter05;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.hadoop.conf.Configuration;
@@ -24,8 +25,8 @@ public class Chapter05E4GrandparentAndGrandchild {
             String relationtype = new String();
             String line = value.toString();
             int i = 0;
-            System.out.println("key="+key.toString());
-            System.out.println("value="+key.toString());
+            System.out.println("key=" + key.toString());
+            System.out.println("value=" + key.toString());
             while (line.charAt(i) != ' ') {
                 i++;
             }
@@ -41,17 +42,17 @@ public class Chapter05E4GrandparentAndGrandchild {
                 context.write(new Text(values[0]), new Text(relationtype + "+" + childname + "+" + parentname));
                 // 右表
             }
-            System.out.println("context="+context.toString());
-            System.out.println("context.getCurrentKey="+context.getCurrentKey());
-            System.out.println("context.getCurrentValue="+context.getCurrentValue());
-            
-            System.out.println("context.getOutputKeyClass="+context.getOutputKeyClass());
-            Class<Text> outputKey=(Class<Text>) context.getOutputKeyClass();
-            System.out.println("context.outputKey="+outputKey.toString());
-            
-            System.out.println("context.getOutputValueClass="+context.getOutputValueClass());
-            Class<Text> outputValue=(Class<Text>) context.getOutputValueClass();
-            System.out.println("outputValue.outputKey="+outputValue.toString());
+            System.out.println("context=" + context.toString());
+            System.out.println("context.getCurrentKey=" + context.getCurrentKey());
+            System.out.println("context.getCurrentValue=" + context.getCurrentValue());
+
+            System.out.println("context.getOutputKeyClass=" + context.getOutputKeyClass());
+            Class<Text> outputKey = (Class<Text>) context.getOutputKeyClass();
+            System.out.println("context.outputKey=" + outputKey.toString());
+
+            System.out.println("context.getOutputValueClass=" + context.getOutputValueClass());
+            Class<Text> outputValue = (Class<Text>) context.getOutputValueClass();
+            System.out.println("outputValue.outputKey=" + outputValue.toString());
 
         }
     }
@@ -98,6 +99,10 @@ public class Chapter05E4GrandparentAndGrandchild {
                     grandparentnum++;
                 }
             }
+            System.out.println("grandchildArray = " + Arrays.toString(grandchild));
+
+            System.out.println("grandparentArray = " + Arrays.toString(grandparent));
+
             // 右表，取出parent放入grandparent
             if (grandparentnum != 0 && grandchildnum != 0) {
                 for (int m = 0; m < grandchildnum; m++) {
@@ -110,26 +115,34 @@ public class Chapter05E4GrandparentAndGrandchild {
         }
     }
 
-    //right Command: hadoop jar hadoopInAction-0.0.4-SNAPSHOT.jar cn.edu.ruc.cloudcomputing.book.chapter05.STjoin -Dmapred.job.queue.name=risk_platform child_parent.txt output_child12
-    //wrong Command: hadoop jar hadoopInAction-0.0.4-SNAPSHOT.jar cn.edu.ruc.cloudcomputing.book.chapter05.STjoin child_parent.txt output_child12 -Dmapred.job.queue.name=risk_platform
-    //Reason: place -Dmapred.job.queue.name=risk_platform before the "child_parent.txt output_child12", or mapred.job.queue.name=risk_platform couldn't be parsed
-    // in the right command, otherArgs[0] still is child_parent.txt even it's in the second position of parameter list, and otherArgs[1] is still output_child12 even it's in the third position of parameter list
+    // right Command: hadoop jar hadoopInAction-0.0.4-SNAPSHOT.jar
+    // cn.edu.ruc.cloudcomputing.book.chapter05.STjoin
+    // -Dmapred.job.queue.name=risk_platform child_parent.txt output_child12
+    // wrong Command: hadoop jar hadoopInAction-0.0.4-SNAPSHOT.jar
+    // cn.edu.ruc.cloudcomputing.book.chapter05.STjoin child_parent.txt
+    // output_child12 -Dmapred.job.queue.name=risk_platform
+    // Reason: place -Dmapred.job.queue.name=risk_platform before the
+    // "child_parent.txt output_child12", or mapred.job.queue.name=risk_platform
+    // couldn't be parsed
+    // in the right command, otherArgs[0] still is child_parent.txt even it's in
+    // the second position of parameter list, and otherArgs[1] is still
+    // output_child12 even it's in the third position of parameter list
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        for(String arg: args){
-            System.out.println("arg_input="+arg);
+        for (String arg : args) {
+            System.out.println("arg_input=" + arg);
         }
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-        for(String arg: otherArgs){
-            System.out.println("arg_GenericOptionsParser="+arg);
+        for (String arg : otherArgs) {
+            System.out.println("arg_GenericOptionsParser=" + arg);
         }
         if (otherArgs.length < 2) {
             System.err.println("Usage: wordcount <in> <out>");
             System.exit(2);
         }
-        System.out.println("queueName="+conf.get("mapred.job.queue.name"));
+        System.out.println("queueName=" + conf.get("mapred.job.queue.name"));
         conf.set("mapred.job.queue.name", "risk_platform");
-        System.out.println("queueName_afterset="+conf.get("mapred.job.queue.name"));
+        System.out.println("queueName_afterset=" + conf.get("mapred.job.queue.name"));
 
         Job job = Job.getInstance(conf, "single table join");
         job.setJarByClass(Chapter05E4GrandparentAndGrandchild.class);

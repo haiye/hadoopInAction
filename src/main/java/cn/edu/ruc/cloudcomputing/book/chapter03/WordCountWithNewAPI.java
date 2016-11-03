@@ -46,18 +46,19 @@ public class WordCountWithNewAPI extends Configured implements Tool {
     }
 
     public int run(String[] args) throws Exception {
-        
+
         Configuration conf = new Configuration();
-        String jobName="Hadoop Chapt03 wordcountNew";
+        String jobName = "Hadoop Chapt03 wordcountNew";
         Job job = Job.getInstance(conf, jobName);
 
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
-        
+
         job.setJarByClass(WordCountWithNewAPI.class);
         job.setMapperClass(WordCountNewMap.class);
+        job.setCombinerClass(WordCountNewReduce.class);
         job.setReducerClass(WordCountNewReduce.class);
 
         job.setOutputKeyClass(Text.class);

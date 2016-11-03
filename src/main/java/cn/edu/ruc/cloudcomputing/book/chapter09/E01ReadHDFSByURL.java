@@ -6,7 +6,7 @@ import java.net.URL;
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
 import org.apache.hadoop.io.IOUtils;
 
-public class URLCat {
+public class E01ReadHDFSByURL {
     static {
         URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory());
     }
@@ -15,6 +15,7 @@ public class URLCat {
         InputStream in = null;
         try {
             in = new URL(args[0]).openStream();
+            // process with in stream, e.x
             IOUtils.copyBytes(in, System.out, 4096, false);
         } finally {
             IOUtils.closeStream(in);

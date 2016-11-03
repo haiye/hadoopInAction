@@ -20,23 +20,26 @@ public class HBaseTestCase {
 
     // create HBase Table
     public static void creat(String tableName, String columnFamily) throws Exception {
-        // 1. create hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        // 1. create
+        // hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
         Configuration hbaseConfiguration = HBaseConfiguration.create();
-        
+
         // 2. create hbaseAdmin(org.apache.hadoop.hbase.client.HBaseAdmin)
         HBaseAdmin hbaseAdmin = new HBaseAdmin(hbaseConfiguration);
-        
+
         if (hbaseAdmin.tableExists(tableName)) {
-            
+
             System.out.println("table Exists!");
-            
+
             System.exit(0);
         } else {
             // 3. create hbaseTableName(org.apache.hadoop.hbase.TableName)
             TableName hbaseTableName = TableName.valueOf(tableName);
-            // 4. create hbaseTableDescriptor(org.apache.hadoop.hbase.HTableDescriptor)
+            // 4. create
+            // hbaseTableDescriptor(org.apache.hadoop.hbase.HTableDescriptor)
             HTableDescriptor hbaseTableDescriptor = new HTableDescriptor(hbaseTableName);
-            // 5. create hbaseColumnDescriptor(org.apache.hadoop.hbase.HColumnDescriptor)
+            // 5. create
+            // hbaseColumnDescriptor(org.apache.hadoop.hbase.HColumnDescriptor)
             HColumnDescriptor hbaseColumnDescriptor = new HColumnDescriptor(columnFamily);
             // 6. addColumnFamily
             hbaseTableDescriptor.addFamily(hbaseColumnDescriptor);
@@ -52,9 +55,10 @@ public class HBaseTestCase {
     // add one row data in hbaseTable
     public static void put(String tablename, String row, String columnFamily, String column, String data)
             throws Exception {
-        // 1. create hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        // 1. create
+        // hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
         Configuration hbaseConfiguration = HBaseConfiguration.create();
-        
+
         // 2. get hbaseTable(org.apache.hadoop.hbase.client.HTable)
         HTable hbaseTable = new HTable(hbaseConfiguration, tablename);
 
@@ -72,16 +76,18 @@ public class HBaseTestCase {
 
     // get one row data in hbaseTable
     public static void get(String tablename, String row) throws IOException {
-        // 1. create hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        // 1. create
+        // hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
         Configuration hbaseConfiguration = HBaseConfiguration.create();
-        
+
         // 2. get hbaseTable(org.apache.hadoop.hbase.client.HTable)
         HTable hbaseTable = new HTable(hbaseConfiguration, tablename);
 
         // 3. create getAction(org.apache.hadoop.hbase.client.Get)
         Get getAction = new Get(Bytes.toBytes(row));
 
-        // 4. take get action and get result(org.apache.hadoop.hbase.client.Result)
+        // 4. take get action and get
+        // result(org.apache.hadoop.hbase.client.Result)
         Result result = hbaseTable.get(getAction);
         System.out.println("Get: " + result);
 
@@ -91,16 +97,18 @@ public class HBaseTestCase {
 
     // get all rows data in hbaseTable(Scan)
     public static void scan(String tablename) throws Exception {
-        // 1. createhbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        // 1.
+        // createhbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
         Configuration hbaseConfiguration = HBaseConfiguration.create();
-        
+
         // 2. get hbaseTable(org.apache.hadoop.hbase.client.HTable)
         HTable hbaseTable = new HTable(hbaseConfiguration, tablename);
 
         // 3. create scanAction(org.apache.hadoop.hbase.client.ResultScanner)
         Scan scan = new Scan();
 
-        // 4. take scan action and get ResultScanner(org.apache.hadoop.hbase.client.ResultScanner)
+        // 4. take scan action and get
+        // ResultScanner(org.apache.hadoop.hbase.client.ResultScanner)
         ResultScanner resultScanner = hbaseTable.getScanner(scan);
         for (Result result : resultScanner) {
             System.out.println("Scan: " + result);
@@ -112,9 +120,10 @@ public class HBaseTestCase {
 
     // delete hbaseTable
     public static boolean delete(String tablename) throws IOException {
-        // 1. create hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
+        // 1. create
+        // hbaseConfiguration(org.apache.hadoop.hbase.HBaseConfiguration)
         Configuration hbaseConfiguration = HBaseConfiguration.create();
-        
+
         // 2. create hbaseAdmin(org.apache.hadoop.hbase.client.HBaseAdmin)
         HBaseAdmin hbaseAdmin = new HBaseAdmin(hbaseConfiguration);
 
@@ -132,10 +141,10 @@ public class HBaseTestCase {
             }
 
         }
-        
+
         // 5. close hbaseTable
         hbaseAdmin.close();
-        
+
         return true;
     }
 

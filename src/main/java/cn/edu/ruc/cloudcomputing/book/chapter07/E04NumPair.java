@@ -1,13 +1,17 @@
 package cn.edu.ruc.cloudcomputing.book.chapter07;
 
-import java.io.*;
-import org.apache.hadoop.io.*;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 
-public class NumPair implements WritableComparable<NumPair> {
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.WritableComparable;
+
+public class E04NumPair implements WritableComparable<E04NumPair> {
     private LongWritable line;
     private LongWritable location;
 
-    public NumPair() {
+    public E04NumPair() {
         set(new LongWritable(0), new LongWritable(0));
     }
 
@@ -16,11 +20,11 @@ public class NumPair implements WritableComparable<NumPair> {
         this.location = second;
     }
 
-    public NumPair(LongWritable first, LongWritable second) {
+    public E04NumPair(LongWritable first, LongWritable second) {
         set(first, second);
     }
 
-    public NumPair(int first, int second) {
+    public E04NumPair(int first, int second) {
         set(new LongWritable(first), new LongWritable(second));
     }
 
@@ -32,17 +36,19 @@ public class NumPair implements WritableComparable<NumPair> {
         return location;
     }
 
+    @Override
     public void readFields(DataInput in) throws IOException {
         line.readFields(in);
         location.readFields(in);
     }
 
+    @Override
     public void write(DataOutput out) throws IOException {
         line.write(out);
         location.write(out);
     }
 
-    public boolean equals(NumPair o) {
+    public boolean equals(E04NumPair o) {
         if ((this.line == o.line) && (this.location == o.location))
             return true;
         return false;
@@ -53,7 +59,8 @@ public class NumPair implements WritableComparable<NumPair> {
         return line.hashCode() * 13 + location.hashCode();
     }
 
-    public int compareTo(NumPair o) {
+    @Override
+    public int compareTo(E04NumPair o) {
         if ((this.line == o.line) && (this.location == o.location))
             return 0;
         return -1;

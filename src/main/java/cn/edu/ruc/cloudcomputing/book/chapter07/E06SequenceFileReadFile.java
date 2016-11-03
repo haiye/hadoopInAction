@@ -2,6 +2,7 @@ package cn.edu.ruc.cloudcomputing.book.chapter07;
 
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -10,7 +11,7 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.util.ReflectionUtils;
 
-public class SequenceFileReadFile {
+public class E06SequenceFileReadFile {
     public static void main(String[] args) throws IOException {
         String uri = "test_file3";
         Configuration conf = new Configuration();
@@ -20,13 +21,13 @@ public class SequenceFileReadFile {
         try {
             reader = new SequenceFile.Reader(fs, path, conf);
             Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
-            Writable value = (Writable)ReflectionUtils.newInstance(reader.getValueClass(), conf);
+            Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
             long position = reader.getPosition();
-            int i=0;
+            int i = 0;
             while (reader.next(key, value)) {
                 String syncSeen = reader.syncSeen() ? "*" : "";
-                if(i++<1000)
-                   System.out.printf("[%s%s]\t%s\t%s\n", position, syncSeen, key, value);
+                if (i++ < 1000)
+                    System.out.printf("[%s%s]\t%s\t%s\n", position, syncSeen, key, value);
                 position = reader.getPosition(); // beginning of next record
             }
         } finally {

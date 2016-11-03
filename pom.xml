@@ -4,7 +4,7 @@
   <groupId>haimin.ye.paypal.michael</groupId>
   <artifactId>hadoopInAction</artifactId>
   <packaging>jar</packaging>
-  <version>0.0.5</version>
+  <version>0.2.0</version>
   <name>Maven Quick Start Archetype</name>
   <url>http://maven.apache.org</url>
   <dependencies>

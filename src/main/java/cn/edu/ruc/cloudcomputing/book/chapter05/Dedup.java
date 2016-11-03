@@ -16,18 +16,18 @@ public class Dedup {
 
     public static class Map extends Mapper<Object, Text, Text, Text> {
 
-        private Text line= new Text();
+        private Text line = new Text();
+
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            line=value;
+            line = value;
             context.write(line, new Text(""));
         }
     }
 
     public static class Reduce extends Reducer<Text, Text, Text, Text> {
 
-        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException,
-                InterruptedException {
-           
+        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+
             context.write(key, new Text(""));
         }
     }

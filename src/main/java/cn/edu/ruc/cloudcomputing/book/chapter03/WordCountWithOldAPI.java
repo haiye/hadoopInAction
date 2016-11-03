@@ -80,6 +80,8 @@ public class WordCountWithOldAPI {
 
         conf.setMapperClass(WordCountMap.class);
 
+        conf.setCombinerClass(WordCountReduce.class);
+
         conf.setOutputKeyClass(Text.class);
         conf.setOutputValueClass(IntWritable.class);
 

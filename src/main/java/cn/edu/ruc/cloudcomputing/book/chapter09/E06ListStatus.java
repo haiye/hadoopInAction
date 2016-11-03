@@ -8,7 +8,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 
-public class ListStatus {
+public class E06ListStatus {
     public static void main(String[] args) throws Exception {
         String uri = args[0];
         Configuration conf = new Configuration();

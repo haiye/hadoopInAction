@@ -9,7 +9,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.io.IOUtils;
 
-public class DoubleCat {
+public class E04ReadHDFSByFSDateInputStreamSeek {
     public static void main(String[] args) throws Exception {
         DistributedFileSystem a;
         String uri = args[0];

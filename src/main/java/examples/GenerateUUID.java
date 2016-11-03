@@ -43,25 +43,24 @@ public class GenerateUUID {
                 }
             }
         }
-        
-        
-        System.out.println("UUID list="+uuidList);
-        System.out.println("acid list="+acidList);
-        
+
+        System.out.println("UUID list=" + uuidList);
+        System.out.println("acid list=" + acidList);
+
         ArrayList<String> saltUuidList = new ArrayList<String>();
         ArrayList<String> saltAcidList = new ArrayList<String>();
-        for(String uuid:uuidList){
+        for (String uuid : uuidList) {
             String saltKey = SaltUtils.buildStringSalt(uuid);
-            saltUuidList.add(saltKey+uuid);
+            saltUuidList.add(saltKey + uuid);
         }
-        
-        for(String acid:acidList){
+
+        for (String acid : acidList) {
             String saltKey = SaltUtils.buildStringSalt(acid);
-            saltAcidList.add(saltKey+acid);  
+            saltAcidList.add(saltKey + acid);
         }
-        
-        System.out.println("saltUuidList list="+saltUuidList);
-        System.out.println("saltAcidList list="+saltAcidList);
+
+        System.out.println("saltUuidList list=" + saltUuidList);
+        System.out.println("saltAcidList list=" + saltAcidList);
 
     }
 

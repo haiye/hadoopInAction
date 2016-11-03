@@ -30,7 +30,7 @@ public class SaltUtils {
 
     public static byte[] shortToBytes(short s) {
         byte[] targets = new byte[2];
-        for(int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             int offset = (targets.length - 1 - i) * 8;
             targets[i] = (byte) ((s >>> offset) & 0xff);
         }
@@ -44,7 +44,6 @@ public class SaltUtils {
         return results;
     }
 
-    
     public static byte[] buildSaltHashKey(String key) {
         byte[] hbaseKey = key.getBytes();
         int saltInt = SaltUtils.toUnsignedShort(SaltUtils.shortHashCode(key.hashCode()));
@@ -68,12 +67,11 @@ public class SaltUtils {
         return Bytes.toString(saltKey).substring(5);
     }
 
-    
     public static void main(String[] args) {
-    
-        String uuid="bbbbb1cac54649ee86685e08d4790d88";
+
+        String uuid = "bbbbb1cac54649ee86685e08d4790d88";
         String saltHashKey = SaltUtils.buildStringSalt(uuid);
-    
-        System.out.println(saltHashKey+uuid);
+
+        System.out.println(saltHashKey + uuid);
     }
 }

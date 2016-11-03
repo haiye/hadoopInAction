@@ -1,17 +1,19 @@
 package cn.edu.ruc.cloudcomputing.book.chapter07;
 
-import java.io.*;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
-public class BooleanWritable implements WritableComparable {
+public class E01BooleanWritable implements WritableComparable {
     private boolean value;
 
-    public BooleanWritable() {
+    public E01BooleanWritable() {
     };
 
-    public BooleanWritable(boolean value) {
+    public E01BooleanWritable(boolean value) {
         set(value);
     }
 
@@ -32,10 +34,10 @@ public class BooleanWritable implements WritableComparable {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof BooleanWritable)) {
+        if (!(o instanceof E01BooleanWritable)) {
             return false;
         }
-        BooleanWritable other = (BooleanWritable) o;
+        E01BooleanWritable other = (E01BooleanWritable) o;
         return this.value == other.value;
     }
 
@@ -45,7 +47,7 @@ public class BooleanWritable implements WritableComparable {
 
     public int compareTo(Object o) {
         boolean a = this.value;
-        boolean b = ((BooleanWritable) o).value;
+        boolean b = ((E01BooleanWritable) o).value;
         return ((a == b) ? 0 : (a == false) ? -1 : 1);
     }
 
@@ -55,7 +57,7 @@ public class BooleanWritable implements WritableComparable {
 
     public static class Comparator extends WritableComparator {
         public Comparator() {
-            super(BooleanWritable.class);
+            super(E01BooleanWritable.class);
         }
 
         public int compare(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
@@ -66,6 +68,6 @@ public class BooleanWritable implements WritableComparable {
     }
 
     static {
-        WritableComparator.define(BooleanWritable.class, new Comparator());
+        WritableComparator.define(E01BooleanWritable.class, new Comparator());
     }
 }

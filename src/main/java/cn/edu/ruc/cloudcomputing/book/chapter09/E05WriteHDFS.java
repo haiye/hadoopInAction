@@ -12,7 +12,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.util.Progressable;
 
-public class FileCopyWithProgress {
+public class E05WriteHDFS {
     public static void main(String[] args) throws Exception {
         String localSrc = args[0];
         String dst = args[1];

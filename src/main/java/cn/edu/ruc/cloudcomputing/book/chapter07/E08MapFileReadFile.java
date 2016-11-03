@@ -12,7 +12,7 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
 
-public class MapFileReadFile {
+public class E08MapFileReadFile {
     public static void main(String[] args) throws IOException {
         String uri = "map_file";
         Configuration conf = new Configuration();
@@ -22,10 +22,10 @@ public class MapFileReadFile {
             reader = new MapFile.Reader(fs, uri, conf);
             WritableComparable key = (WritableComparable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
             Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
-            int i=0;
+            int i = 0;
 
             while (reader.next(key, value)) {
-                if(i++<1000)
+                if (i++ < 1000)
                     System.out.printf("%s\t%s\n", key, value);
             }
             reader.get(new IntWritable(7), value);

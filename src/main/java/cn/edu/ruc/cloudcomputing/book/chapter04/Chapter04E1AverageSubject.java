@@ -1,4 +1,5 @@
 package cn.edu.ruc.cloudcomputing.book.chapter04;
+
 /**
  * get average score for all subjects
  * 
@@ -45,7 +46,7 @@ public class Chapter04E1AverageSubject extends Configured implements Tool {
                 StringTokenizer tokenizerLine = new StringTokenizer(next_str);
                 String nameStr = tokenizerLine.nextToken(); // 学生姓名部分
                 Text nameText = new Text(nameStr);// 学生姓名
-                
+
                 String scoreStr = tokenizerLine.nextToken();// 成绩部分
                 scoreStr = scoreStr + "~" + SUBJECT_COUNT;// scoreOfStudent~studentCount
                 Text scoreText = new Text(scoreStr);

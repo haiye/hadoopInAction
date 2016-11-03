@@ -1,7 +1,10 @@
 package cn.edu.ruc.cloudcomputing.book.chapter05;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -19,97 +22,77 @@ public class Chapter05E5FactoryAndAddress {
     public static class Chapter05E5FactoryAndAddressMap extends Mapper<Object, Text, Text, Text> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            
-            System.out.println("map_input, key="+key+"; value="+value);
-            String line = value.toString();
-            int i = 0;
-            if (line.contains("factoryname") == true || line.contains("addressID") == true) {
+
+            String lineContent = value.toString();
+            if (lineContent.contains("factoryname") == true || lineContent.contains("addressID") == true) {
                 return;
             }
-            while (line.charAt(i) >= '9' || line.charAt(i) <= '0') {
-                i++;
+
+            String regex = "[1-9]";
+
+            String firstChar = lineContent.substring(0, 1);
+            if (firstChar.matches(regex)) {
+                System.out.println("this line containers addrID and addrName; line_content=" + lineContent);
+
+                // write data into left table <addressId, 1+addressName>
+
+                // 不能用lineContent.substring(0,1)，因为addrId可能是两位数
+                String addrId = lineContent.substring(0, lineContent.indexOf(' '));
+                String addrName = lineContent.substring(lineContent.indexOf(' ') + 1);
+                System.out.println("addrId=" + addrId + " addrName = " + addrName);
+                context.write(new Text(addrId), new Text("1+" + addrName));
+            } else {
+                System.out.println("this line containers factoryName amd addrID; line_content=" + lineContent);
+
+                // write data into right table <addressId, 2+factoryName>
+
+                String addrId = lineContent.substring(lineContent.lastIndexOf(' ') + 1);
+                String factoryName = lineContent.substring(0, lineContent.lastIndexOf(' '));
+                System.out.println("addrId=" + addrId + " factoryName = " + factoryName);
+                context.write(new Text(addrId), new Text("2+" + factoryName));
             }
-
-            if (line.charAt(0) >= '9' || line.charAt(0) <= '0') {
-
-                int j = i - 1;
-                while (line.charAt(j) != ' ')
-                    j--;
-                String[] values = { line.substring(0, j), line.substring(i) };
-                context.write(new Text(values[1]), new Text("1+" + values[0]));
-            } else { 
-                int j = i + 1;
-                while (line.charAt(j) != ' ')
-                    j++;
-                String[] values = { line.substring(0, i + 1), line.substring(j) };
-                context.write(new Text(values[0]), new Text("2+" + values[1]));
-
-            }
-            
-            
-            System.out.println("context.getOutputKeyClass="+context.getOutputKeyClass());
-            Class<Text> outputKey=(Class<Text>) context.getOutputKeyClass();
-            System.out.println("map_output.outputKey="+outputKey.toString());
-            
-            System.out.println("context.getOutputValueClass="+context.getOutputValueClass());
-            Class<Text> outputValue=(Class<Text>) context.getOutputValueClass();
-            System.out.println("map_output.value="+outputValue.toString());
-       
         }
     }
 
     public static class Chapter05E5FactoryAndAddressReduce extends Reducer<Text, Text, Text, Text> {
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 
-            System.out.println("reduce_input, key="+key);
-            System.out.println("reduce_input, values="+values);
-            Iterator ite_tmp = values.iterator();
-            int count=0;
-            while (ite_tmp.hasNext()) {
-                System.out.println("reduce_input, value_"+(count++)+"="+ite_tmp.next().toString());
-            }
+            Iterator<Text> iterator = values.iterator();
 
-            if (time == 0) {
-                context.write(new Text("factoryname"), new Text("addressname"));
-                time++;
-            }
+            System.out.println("this key = " + key);
+            List<String> addressNameList = new ArrayList<String>();
+            List<String> factoryNameList = new ArrayList<String>();
+            while (iterator.hasNext()) {
+                String record = iterator.next().toString();
+                String type = record.substring(0, record.indexOf("+"));
+                if (type.equals("1")) {
+                    String addressName = record.substring(record.indexOf("+") + 1);
+                    System.out.println("this record containers addressName; record_content = " + record
+                            + "; addressName = " + addressName);
 
-            int factorynum = 0;
-            String factory[] = new String[10];
-            int addressnum = 0;
-            String address[] = new String[10];
-            Iterator ite = values.iterator();
-            while (ite.hasNext()) {
-                String record = ite.next().toString();
-                int len = record.length();
-                int i = 2;
-                char type = record.charAt(0);
-                String factoryname = new String();
-                String addressname = new String();
-                if (type == '1') {
-                    factory[factorynum] = record.substring(2);
-                    factorynum++;
+                    addressNameList.add(addressName);
                 } else {
-                    address[addressnum] = record.substring(2);
-                    addressnum++;
+                    String factoryName = record.substring(record.indexOf("+") + 1);
+                    System.out.println("this record containers factoryName; record_content = " + record
+                            + "; factoryName = " + factoryName);
+
+                    factoryNameList.add(factoryName);
                 }
             }
-            if (factorynum != 0 && addressnum != 0) {
-                for (int m = 0; m < factorynum; m++) {
-                    for (int n = 0; n < addressnum; n++) {
-                        context.write(new Text(factory[m]), new Text(address[n]));
-                    }
+
+            String[] addrArrays = addressNameList.toArray(new String[0]);
+            System.out.println("addrArrays =" + Arrays.toString(addrArrays));
+
+            String[] factoryArrays = factoryNameList.toArray(new String[0]);
+            System.out.println("factoryArrays =" + Arrays.toString(factoryArrays));
+
+            for (String factory : factoryArrays) {
+                for (String addr : addrArrays) {
+                    System.out.println("factory = " + factory + " addr = " + addr);
+                    context.write(new Text(factory), new Text(addr));
+
                 }
             }
-            
-            System.out.println("context.getOutputKeyClass="+context.getOutputKeyClass());
-            Class<Text> outputKey=(Class<Text>) context.getOutputKeyClass();
-            System.out.println("reduce_output.outputKey="+outputKey.toString());
-            
-            System.out.println("context.getOutputValueClass="+context.getOutputValueClass());
-            Class<Text> outputValue=(Class<Text>) context.getOutputValueClass();
-            System.out.println("reduce_output.value="+outputValue.toString());
-            
 
         }
     }

@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.compress.CompressionCodec;
@@ -104,7 +103,7 @@ public class GZReader {
 
     private String filePath;
     private Integer[] offsetBeginIndexArray;
-    private  Integer[] offsetEndIndexArray;
+    private Integer[] offsetEndIndexArray;
     private boolean debugLog;
 
     public GZReader() {
@@ -163,8 +162,6 @@ public class GZReader {
         }
     }
 
-   
-
     public void readLineByBufferedReaderLineSkipTest() {
         ArrayList<Long> timeBeginArray = new ArrayList<Long>();
         ArrayList<Long> timeEndArray = new ArrayList<Long>();
@@ -191,7 +188,7 @@ public class GZReader {
         long time_end_total = System.currentTimeMillis();
         timeBeginArray.add(time_begin_total);
         timeEndArray.add(time_end_total);
-        
+
         System.out.println("readLineByBufferedReaderLineSkipTest");
         printCostTime(timeBeginArray, timeEndArray, offsetBeginIndexArray, offsetEndIndexArray);
 
@@ -226,7 +223,8 @@ public class GZReader {
 
         for (int index = 0; index < offsetBeginIndexArray.length; index++) {
             timeBeginArray.add(System.currentTimeMillis());
-            String lineContent = readLineByBufferedReaderRead(br, offsetBeginIndexArray[index],offsetEndIndexArray[index]);
+            String lineContent = readLineByBufferedReaderRead(br, offsetBeginIndexArray[index],
+                    offsetEndIndexArray[index]);
             timeEndArray.add(System.currentTimeMillis());
             if (debugLog) {
                 System.out.println("readLineByBufferedReaderSkipTest: filePath=" + filePath + " offset "
@@ -238,17 +236,17 @@ public class GZReader {
 
         timeBeginArray.add(time_begin_total);
         timeEndArray.add(System.currentTimeMillis());
-        
+
         System.out.println("readLineByBufferedReaderReadTest");
 
         printCostTime(timeBeginArray, timeEndArray, offsetBeginIndexArray, offsetEndIndexArray);
     }
 
     private String readLineByBufferedReaderRead(BufferedReader br, int offsetBegin, int offsetEnd) {
-        System.out.println("readLineByBufferedReaderRead: offsetBegin="+offsetBegin+" offsetEnd"+offsetEnd );
-        char[] b =  new char[offsetEnd+1];
+        System.out.println("readLineByBufferedReaderRead: offsetBegin=" + offsetBegin + " offsetEnd" + offsetEnd);
+        char[] b = new char[offsetEnd + 1];
         try {
-            br.read(b, offsetBegin, offsetEnd-offsetBegin);
+            br.read(b, offsetBegin, offsetEnd - offsetBegin);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -258,7 +256,6 @@ public class GZReader {
     }
 
     public void readLineByInputStreamReadTest() {
-        
 
         ArrayList<Long> timeBeginArray = new ArrayList<Long>();
         ArrayList<Long> timeEndArray = new ArrayList<Long>();
@@ -277,7 +274,8 @@ public class GZReader {
 
         for (int index = 0; index < offsetBeginIndexArray.length; index++) {
             timeBeginArray.add(System.currentTimeMillis());
-            String lineContent = readLineByInputStreamRead(inputStream, offsetBeginIndexArray[index],offsetEndIndexArray[index]);
+            String lineContent = readLineByInputStreamRead(inputStream, offsetBeginIndexArray[index],
+                    offsetEndIndexArray[index]);
             timeEndArray.add(System.currentTimeMillis());
             if (debugLog) {
                 System.out.println("readLineByBufferedReaderSkipTest: filePath=" + filePath + " offset "
@@ -295,11 +293,11 @@ public class GZReader {
     }
 
     private String readLineByInputStreamRead(InputStream stream, int offsetBegin, int offsetEnd) {
-        System.out.println("readLineByInputStreamRead:offsetBegin="+offsetBegin+" offsetEnd"+offsetEnd );
+        System.out.println("readLineByInputStreamRead:offsetBegin=" + offsetBegin + " offsetEnd" + offsetEnd);
 
-        byte[] b = new byte[offsetEnd+1];
+        byte[] b = new byte[offsetEnd + 1];
         try {
-            stream.read(b, offsetBegin, offsetEnd-offsetBegin);
+            stream.read(b, offsetBegin, offsetEnd - offsetBegin);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -316,7 +314,8 @@ public class GZReader {
                     + (timeEndArray.get(timeEndArray.size() - 1) - timeBeginArray.get(timeBeginArray.size() - 1)));
 
             for (int index = 0; index < offsetBeginIndexArray.length; index++) {
-                System.out.println("perLine: offsetBegin=" + offsetBeginIndexArray[index]+" offsetEnd="+offsetBeginIndexArray[index] + " timeCost="
+                System.out.println("perLine: offsetBegin=" + offsetBeginIndexArray[index] + " offsetEnd="
+                        + offsetBeginIndexArray[index] + " timeCost="
                         + (timeEndArray.get(index) - timeBeginArray.get(index)));
             }
         } else {
@@ -325,71 +324,74 @@ public class GZReader {
         }
     }
 
-//    public void readLineByBufferedReaderSeek(String filePath, String[] offsetBeginIndexArray, boolean debug)
-//            throws IOException {
-//
-//        Configuration conf = new Configuration();
-//        Path file_path = new Path(filePath);
-//
-//        // ignoring files like _SUCCESS
-//        if (file_path.getName().startsWith("_")) {
-//            return;
-//        }
-//
-//        CompressionCodecFactory factory = new CompressionCodecFactory(conf);
-//        CompressionCodec codec = factory.getCodec(file_path);
-//        FileSystem fileSystem = FileSystem.get(file_path.toUri(), conf);
-//        InputStream stream = null;
-//
-//        // // check if we have a compression codec we need to use
-//        // if (codec != null) {
-//        // System.out.println("this is a compression file");
-//        // stream = codec.createInputStream(fileSystem.open(file_path));
-//        // } else {
-//        // System.out.println("this is a normal file");
-//        // stream = fileSystem.open(file_path);
-//        // }
-//
-//        FSDataInputStream inputStream = fileSystem.open(new Path(filePath));
-//        BufferedReader br = null;
-//        for (int i = 0; i < offsetBeginIndexArray.length; i++) {
-//            long time_begin = System.currentTimeMillis();
-//
-//            int len = Integer.parseInt(offsetBeginIndexArray[i]);
-//            System.out.println("offset: " + len);
-//
-//            // try{
-//            // inputStream.seek(len);
-//            // BufferedReader reader = new BufferedReader(new
-//            // InputStreamReader(inputStream));
-//            // String rawPayload = reader.readLine();
-//            // System.out.println("rawPayload="+rawPayload);
-//            // }catch(Exception e){
-//            // System.out.println("error happened1: "+e);
-//            // }
-//            codec.createInputStream(inputStream);
-//            try {
-//                inputStream = new FSDataInputStream(null);
-//                inputStream.seek(len);
-//                br = new BufferedReader(new InputStreamReader(inputStream));
-//                String content = br.readLine();
-//                System.out.println("content=" + content);
-//            } catch (Exception e) {
-//                System.out.println("error happened2: " + e);
-//            }
-//            br.close();
-//
-//            long time_end = System.currentTimeMillis();
-//
-//            if (debug) {
-//                System.out.println("readLineByBufferedReaderSkipTest: filePath=" + filePath + " offset "
-//                        + offsetBeginIndexArray[i] + " timecost=" + (time_end - time_begin));
-//            }
-//            System.out.println("readLineByBufferedReaderSkipTest: filePath=" + filePath + " offset "
-//                    + offsetBeginIndexArray[i] + " timecost=" + (time_end - time_begin));
-//        }
-//        inputStream.close();
-//    }
-//
-//   
+    // public void readLineByBufferedReaderSeek(String filePath, String[]
+    // offsetBeginIndexArray, boolean debug)
+    // throws IOException {
+    //
+    // Configuration conf = new Configuration();
+    // Path file_path = new Path(filePath);
+    //
+    // // ignoring files like _SUCCESS
+    // if (file_path.getName().startsWith("_")) {
+    // return;
+    // }
+    //
+    // CompressionCodecFactory factory = new CompressionCodecFactory(conf);
+    // CompressionCodec codec = factory.getCodec(file_path);
+    // FileSystem fileSystem = FileSystem.get(file_path.toUri(), conf);
+    // InputStream stream = null;
+    //
+    // // // check if we have a compression codec we need to use
+    // // if (codec != null) {
+    // // System.out.println("this is a compression file");
+    // // stream = codec.createInputStream(fileSystem.open(file_path));
+    // // } else {
+    // // System.out.println("this is a normal file");
+    // // stream = fileSystem.open(file_path);
+    // // }
+    //
+    // FSDataInputStream inputStream = fileSystem.open(new Path(filePath));
+    // BufferedReader br = null;
+    // for (int i = 0; i < offsetBeginIndexArray.length; i++) {
+    // long time_begin = System.currentTimeMillis();
+    //
+    // int len = Integer.parseInt(offsetBeginIndexArray[i]);
+    // System.out.println("offset: " + len);
+    //
+    // // try{
+    // // inputStream.seek(len);
+    // // BufferedReader reader = new BufferedReader(new
+    // // InputStreamReader(inputStream));
+    // // String rawPayload = reader.readLine();
+    // // System.out.println("rawPayload="+rawPayload);
+    // // }catch(Exception e){
+    // // System.out.println("error happened1: "+e);
+    // // }
+    // codec.createInputStream(inputStream);
+    // try {
+    // inputStream = new FSDataInputStream(null);
+    // inputStream.seek(len);
+    // br = new BufferedReader(new InputStreamReader(inputStream));
+    // String content = br.readLine();
+    // System.out.println("content=" + content);
+    // } catch (Exception e) {
+    // System.out.println("error happened2: " + e);
+    // }
+    // br.close();
+    //
+    // long time_end = System.currentTimeMillis();
+    //
+    // if (debug) {
+    // System.out.println("readLineByBufferedReaderSkipTest: filePath=" +
+    // filePath + " offset "
+    // + offsetBeginIndexArray[i] + " timecost=" + (time_end - time_begin));
+    // }
+    // System.out.println("readLineByBufferedReaderSkipTest: filePath=" +
+    // filePath + " offset "
+    // + offsetBeginIndexArray[i] + " timecost=" + (time_end - time_begin));
+    // }
+    // inputStream.close();
+    // }
+    //
+    //
 }
