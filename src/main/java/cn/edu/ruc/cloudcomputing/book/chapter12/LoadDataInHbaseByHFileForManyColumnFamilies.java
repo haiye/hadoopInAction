@@ -249,11 +249,11 @@ public class LoadDataInHbaseByHFileForManyColumnFamilies extends
              */  
             private WriterLength getNewWriter(byte[] family) throws IOException {  
                 WriterLength wl = new WriterLength();  
-                Path familydir = new Path(outputdir, Bytes.toString(family));  
-                wl.writer = new HFile.Writer(fs, StoreFile.getUniqueFile(fs,  
-                        familydir), blocksize, compression,  
-                        KeyValue.KEY_COMPARATOR);  
-                this.writers.put(family, wl);  
+//                Path familydir = new Path(outputdir, Bytes.toString(family));  
+//                wl.writer = new HFile.Writer(fs, StoreFile.getUniqueFile(fs,  
+//                        familydir), blocksize, compression,  
+//                        KeyValue.KEY_COMPARATOR);  
+//                this.writers.put(family, wl);  
                 return wl;  
             }  
   
@@ -339,27 +339,27 @@ public class LoadDataInHbaseByHFileForManyColumnFamilies extends
         TreeSet sorted = new TreeSet(  
                 startKeys);  
   
-        ImmutableBytesWritable first = sorted.first();  
-        Preconditions  
-                .checkArgument(  
-                        first.equals(HConstants.EMPTY_BYTE_ARRAY),  
-                        "First region of table should have empty start key. Instead has: %s",  
-                        Bytes.toStringBinary(first.get()));  
-        sorted.remove(first);  
+//        ImmutableBytesWritable first = sorted.first();  
+//        Preconditions  
+//                .checkArgument(  
+//                        first.equals(HConstants.EMPTY_BYTE_ARRAY),  
+//                        "First region of table should have empty start key. Instead has: %s",  
+//                        Bytes.toStringBinary(first.get()));  
+//        sorted.remove(first);  
   
         // Write the actual file  
-        FileSystem fs = partitionsPath.getFileSystem(conf);  
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf,  
-                partitionsPath, ImmutableBytesWritable.class,  
-                NullWritable.class);  
-  
-        try {  
-            for (ImmutableBytesWritable startKey : sorted) {  
-                writer.append(startKey, NullWritable.get());  
-            }  
-        } finally {  
-            writer.close();  
-        }  
+//        FileSystem fs = partitionsPath.getFileSystem(conf);  
+//        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf,  
+//                partitionsPath, ImmutableBytesWritable.class,  
+//                NullWritable.class);  
+//  
+//        try {  
+//            for (ImmutableBytesWritable startKey : sorted) {  
+//                writer.append(startKey, NullWritable.get());  
+//            }  
+//        } finally {  
+//            writer.close();  
+//        }  
     }  
   
     /** 
