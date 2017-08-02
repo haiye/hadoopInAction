@@ -1,4 +1,4 @@
-package haimin.ye.zookeeper;
+package michael.ye.zookeeper;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -22,6 +22,7 @@ public class ZKCreateGroup implements Watcher {
 	}
 
 	public void process(WatchedEvent event) { // Watcher interface
+	    System.out.println("mywatcher:"+event.toString());
 		if (event.getState() == KeeperState.SyncConnected) {
 			connectedSignal.countDown();
 			
